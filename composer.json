@@ -1,0 +1,22 @@
+{
+    "name": "erikgall/transformer",
+    "description": "Laravel model transformers for API's",
+    "authors": [
+        {
+            "name": "Erik Galloway",
+            "email": "erik@mybarnapp.com"
+        }
+    ],
+    "require": {
+        "illuminate/support": "^5.2",
+        "illuminate/database": "^5.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "EGALL\\Transformer\\": "src/"
+        }
+    }
+}
