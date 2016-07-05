@@ -26,6 +26,7 @@
     "autoload-dev": {
         "classmap": [
             "tests/mocks/Model.php",
+            "tests/mocks/MockBaseTransformer.php",
             "tests/mocks/ModelTransformer.php"
         ]
 
