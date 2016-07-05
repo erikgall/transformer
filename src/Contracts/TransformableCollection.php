@@ -18,11 +18,4 @@ interface TransformableCollection
      */
     public function transform();
 
-    /**
-     * Lazy load a model relationship.
-     *
-     * @return $this
-     */
-    public function with();
-
 }

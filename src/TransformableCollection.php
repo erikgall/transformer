@@ -5,6 +5,12 @@ namespace EGALL\Transformer;
 use Illuminate\Support\Collection;
 use EGALL\Transformer\Contracts\TransformableCollection as Contract;
 
+/**
+ * TransformableCollection Class
+ *
+ * @package EGALL\Transformer
+ * @author Erik Galloway <erik@mybarnapp.com>
+ */
 class TransformableCollection extends Transformer implements Contract
 {
 
@@ -32,7 +38,7 @@ class TransformableCollection extends Transformer implements Contract
 
             if ($this->isTransformable($model)) {
 
-                return $model->transformer->loadRelationships($this->with)->transform();
+                return $model->transformer()->loadRelationships($this->with)->transform();
 
             }
 
@@ -43,27 +49,5 @@ class TransformableCollection extends Transformer implements Contract
         return $data->toArray();
 
     }
-
-    /**
-     * @return $this|array
-     */
-    public function with()
-    {
-        if (func_num_args() == 0) {
-            return $this->with;
-        }
-
-        $models = func_get_args();
-
-        $this->model->load($models);
-
-        foreach ($models as $name) {
-
-            $this->with[] = new TransformedRelationship($this->model, $name);
-
-        }
-
-        return $this;
-
-    }
+    
 }
