@@ -1,12 +1,16 @@
 {
     "name": "erikgall/transformer",
-    "description": "Laravel model transformers for API's",
+    "type": "library",
+    "description": "Laravel model transformers with relationships for API based applications.",
+    "homepage": "https://github.com/erikgall/transformer",
+    "keywords": ["laravel", "eloquent", "model", "transformer", "api", "json"],
     "authors": [
         {
             "name": "Erik Galloway",
             "email": "erik@mybarnapp.com"
         }
     ],
+    "license": "MIT",
     "require": {
         "illuminate/support": "^5.2",
         "illuminate/database": "^5.2"
