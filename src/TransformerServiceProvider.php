@@ -32,6 +32,6 @@ class TransformerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(TransformerContract::class, Transformer::class);
-        $this->app->bind(TransformerCollectionContract::class, TransformableCollection::class);
+        $this->app->bind(TransformableCollectionContract::class, TransformableCollection::class);
     }
 }
