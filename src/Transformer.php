@@ -114,6 +114,21 @@ class Transformer implements TransformerContract
     }
 
     /**
+     * Set the with array so collections don't see n+1 problem.
+     * 
+     * @param array $relationships
+     * @return $this
+     */
+    public function loadRelationship(array $relationships)
+    {
+        
+        $this->with = $relationships;
+
+        return $this;
+        
+    }
+
+    /**
      * Set the model or collection.
      *
      * @param \Illuminate\Database\Eloquent\Model|\Illuminate\Support\Collection $model
@@ -121,6 +136,12 @@ class Transformer implements TransformerContract
      */
     public function model($model)
     {
+
+        if ($this->isCollection($model)) {
+
+            return new TransformableCollection($model);
+
+        }
 
         $this->model = $model;
 
@@ -181,7 +202,13 @@ class Transformer implements TransformerContract
 
         $collection = $this->model->map(function ($model) {
 
-            return (new static($model))->transform();
+            if ($this->isTransformable($model)) {
+
+                return $model->transform();
+
+            }
+
+            return $model->toArray();
 
         });
 

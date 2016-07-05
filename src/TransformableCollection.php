@@ -3,8 +3,9 @@
 namespace EGALL\Transformer;
 
 use Illuminate\Support\Collection;
+use EGALL\Transformer\Contracts\TransformableCollection as Contract;
 
-class TransformableCollection extends Transformer
+class TransformableCollection extends Transformer implements Contract
 {
 
     /**
@@ -31,7 +32,7 @@ class TransformableCollection extends Transformer
 
             if ($this->isTransformable($model)) {
 
-                return $model->transform();
+                return $model->transformer->loadRelationships($this->with)->transform();
 
             }
 
@@ -51,11 +52,7 @@ class TransformableCollection extends Transformer
 
         $models = func_get_args();
 
-        $this->model->each(function($model) use ($models) {
-
-            $model->load($models);
-
-        });
+        $this->model->load($models);
 
         foreach ($models as $name) {
 

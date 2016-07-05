@@ -3,12 +3,6 @@
 namespace EGALL\Transformer\Contracts;
 
 /**
- * Base eloquent model transformer.
- *
- * @package EGALL\Transformer
- * @author Erik Galloway <erik@mybarnapp.com>
- */
-/**
  * Transformer interface contract.
  *
  * @package EGALL\Transformer\Contracts
