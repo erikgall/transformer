@@ -1,11 +1,16 @@
 <?php
 
-namespace App\Providers;
+namespace EGALL\Transformer;
 
-use EGALL\Transformer\Contracts\Transformer as TransformerContract;
-use EGALL\Transformer\Transformer;
 use Illuminate\Support\ServiceProvider;
+use EGALL\Transformer\Contracts\Transformer as TransformerContract;
 
+/**
+ * Transformer service provider.
+ *
+ * @package EGALL\Transformer
+ * @author Erik Galloway <erik@mybarnapp.com>
+ */
 class TransformerServiceProvider extends ServiceProvider
 {
     /**
