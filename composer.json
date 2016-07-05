@@ -18,5 +18,12 @@
         "psr-4": {
             "EGALL\\Transformer\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/mocks/Model.php",
+            "tests/mocks/ModelTransformer.php"
+        ]
+
     }
 }
