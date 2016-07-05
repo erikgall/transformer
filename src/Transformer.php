@@ -266,7 +266,7 @@ class Transformer implements TransformerContract
     protected function getAttributeMethodName($key)
     {
 
-        return 'get' . ucfirst($key) . 'Attribute';
+        return 'get' . ucfirst(camel_case($key)) . 'Attribute';
     }
 
     /**
