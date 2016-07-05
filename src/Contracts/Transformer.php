@@ -43,6 +43,14 @@ interface Transformer
     public function isTransformable($object);
 
     /**
+     * Set the with relationship array.
+     *
+     * @param array $with
+     * @return $this
+     */
+    public function loadRelationships(array $with);
+
+    /**
      * Set the model or collection.
      * 
      * @param \Illuminate\Database\Eloquent\Model|\Illuminate\Support\Collection $model

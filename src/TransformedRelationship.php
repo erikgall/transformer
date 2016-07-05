@@ -2,8 +2,8 @@
 
 namespace EGALL\Transformer;
 
-use EGALL\Transformer\Contracts\Transformable;
 use Illuminate\Support\Collection;
+use EGALL\Transformer\Contracts\Transformable;
 
 /**
  * TransformedRelationship Class
@@ -65,7 +65,7 @@ class TransformedRelationship
 
     /**
      * Does the relationship have any children.
-     * 
+     *
      * @return bool
      */
     public function hasChildRelationship()
@@ -77,15 +77,24 @@ class TransformedRelationship
 
     /**
      * Is the relationship a collection.
-     * 
+     *
      * @return bool
      */
     public function isCollection()
     {
 
-        if (is_null($this->collection) && $this->model->{$this->key} instanceof Collection) {
+        if (is_null($this->collection)) {
 
-            $this->collection = true;
+            if ($this->modelIsCollection() && !$this->model->isEmpty()) {
+                $this->collection = $this->model->first()->{$this->key} instanceof Collection;
+
+                return $this->collection;
+            }
+
+            if ($this->model->{$this->key()} instanceof Collection) {
+
+                $this->collection = true;
+            }
 
         }
 
@@ -103,8 +112,18 @@ class TransformedRelationship
 
         if (is_null($this->transformable)) {
 
+            if ($this->modelIsCollection() && !$this->model->isEmpty()) {
+
+                $model = $this->model->first()->{$this->key};
+
+            } else {
+
+                $model = $this->model->{$this->key};
+
+            }
+
             $this->transformable = in_array(
-                Transformable::class, class_implements($this->model->{$this->key})
+                Transformable::class, class_implements($model)
             );
 
         }
@@ -126,12 +145,58 @@ class TransformedRelationship
     }
 
     /**
+     * Is the parent model a collection.
+     *
+     * @return bool
+     */
+    public function modelIsCollection()
+    {
+
+        return $this->model instanceof Collection;
+
+    }
+
+    /**
      * Return the transformed relationship.
      *
      * @return array
      */
     public function transform()
     {
+
+        if ($this->modelIsCollection()) {
+
+            return $this->model->map(function ($model) {
+
+                if ($this->isCollection()) {
+
+                    $model->{$this->key}->map(function ($child) {
+
+                        if ($this->hasChildRelationship()) {
+
+                            return $child->transformer()->with($this->child)->tranform();
+
+                        }
+
+                        return $child->transform();
+
+                    });
+
+                }
+
+
+                if ($this->hasChildRelationship()) {
+
+                    return $model->{$this->key}->transformer()->with($this->child)->transform();
+
+                }
+
+                return $model->{$this->key}->transform();
+
+
+            })->toArray();
+
+        }
 
         if ($this->isCollection()) {
 
@@ -184,7 +249,7 @@ class TransformedRelationship
 
     /**
      * Transform a transformable model to an array.
-     * 
+     *
      * @param \EGALL\Transformer\Contracts\Transformable|\Illuminate\Database\Eloquent\Model $model
      * @return mixed
      */

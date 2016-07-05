@@ -119,7 +119,7 @@ class Transformer implements TransformerContract
      * @param array $relationships
      * @return $this
      */
-    public function loadRelationship(array $relationships)
+    public function loadRelationships(array $relationships)
     {
         
         $this->with = $relationships;

@@ -44,6 +44,9 @@ class TransformableCollection extends Transformer implements Contract
 
     }
 
+    /**
+     * @return $this|array
+     */
     public function with()
     {
         if (func_num_args() == 0) {
@@ -56,7 +59,7 @@ class TransformableCollection extends Transformer implements Contract
 
         foreach ($models as $name) {
 
-            $this->with[] = $name;
+            $this->with[] = new TransformedRelationship($this->model, $name);
 
         }
 
