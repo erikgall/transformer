@@ -22,7 +22,7 @@ class ModelToCollectionRelationship extends Relationship
     {
         $model = $this->item->{$this->key};
 
-        if ($this->isTransformable($model->first())) {
+        if (!$model->isEmpty() && $this->isTransformable($model->first())) {
 
             return $this->transformCollection($model);
 
