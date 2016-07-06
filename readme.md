@@ -1,8 +1,65 @@
 # Laravel Model Transformer
 
-This package was created to be used inside of a Laravel application that utilizes an API to deliver data. This package allows you transform model's directly from the model without clogging up the model class/file. This package also make's using Eloquent relationships easy to transform.
+Transform Laravel Eloquent models into an array of specified keys with the option of including nested relationships as their transformed model array.
 
-This package also allows for easy handling of including transformed Eloquent model relationships.
+
+## The Reason
+
+This package was created to ease complexity, simplify model's, while allowing for them to be quickly transposed into an array of specified keys.
+
+But turning an eloquent model into an array is easy right? You only have to call the `toArray()` method. The shortfall comes when you want the final array to only have specific fields/keys, as well as a nested relationship. You end up transforming the model inside of your controller, specifying each and every key and value the array should have.
+
+### Example
+
+#### Without Laravel Model Transformer
+
+```php
+$user = App\User::with('school')->first();
+
+$data = $user->toArray();
+
+/**
+ * What we get from the broad example is something like:
+ *   [
+ *      'id' => 1,
+ *       'email' => 'example@example.com',
+ *       'password' => '.....',
+ *       'first_name' => 'John',
+ *       'last_name' => 'Doe',
+ *       'school_id' => 1,
+ *       'created_at' => '...',
+ *       'updated_at' => '...',
+ *       'school' => [
+ *           'id' => 1,
+ *           'name' => 'Example University',
+ *           'book_price' => 6000,
+ *           'created_at' => '...',
+ *           'updated_at' => '...'
+ *       ]
+ *   ];
+ */
+```
+
+#### With Laravel Model Transformer
+
+```php
+$user = App\User::first();
+$user->transformer()->with('school')->transform();
+```
+
+And it returns:
+
+```php
+[
+    'id' => 1,
+    'email' => 'example@example.com',
+    'name' => 'John Doe',
+    'school' => [
+        'id' => 1,
+        'name' => 'Example University'
+    ]
+]
+```
 
 ## Getting Started
 
@@ -10,7 +67,7 @@ These instructions will get you get you up and running and using the package ins
 
 ### Prerequisities
 
-The package was developed using Laravel 5.2 and PHP 7 so they're may be code that is not compatible with PHP 5.
+The package was developed using Laravel 5.2 and PHP 7 so there may be incompatibilities with PHP 5.
 
 ```
 - PHP >= 7
@@ -32,12 +89,18 @@ Step 2: Add the package's service provider to your provider's array in you `app.
 EGALL\Transformer\TransformerServiceProvider::class
 ```
 
-Step 3: Create a transformers directory in your `app/` directory or wherever you would like.
+Step 3: Create a transformers directory inside of the directory where your model files live. Example using the location of a User model and its transformer class:
 
-Step 4: Any models use wish to use a transformer with should have the `Transformable` interface/contract added to their declaration and should also use the `TransformableModel` trait.
+    - app/User.php -> app/transformers/UserTransformer.php
+    - app/Models/User.php -> app/models/transformers/UserTransformer.php
+
+    * The Transformers directory must be in the same directory as you models... Only if you wish to use the automatic transformer class finder. Otherwise you must specify the model's transformer class/full namespace.
+
+Step 4: Any models use wish to use a transformer with must implement the `EGALL\Transformer\Contracts\Transformable` interface/contract. You should also include the trait `EGALL\Transformer\Traits\TransformableModel` inside of your model classes.
 
 
 ```php
+
 namespace App;
 
 use App\Transformers\UserTransformer;
@@ -49,6 +112,10 @@ class User extends Model implements Transformable {
 
     use TransformableModel;
 
+    // Only use if your Transformer directory does not sit in the same directory
+    // as the model file.
+    // protected $transformer = 'Acme\Transformers\UserTransformer';
+
     // Used in example below
     public function school()
     {
@@ -57,18 +124,12 @@ class User extends Model implements Transformable {
 
     }
 
-    protected function transformer() {
-
-        // UserTransformer example below.
-        return new UserTransformer($this);
-    }
-
 }
 
 ```
 
 
-Examples below:
+Example below:
 
 **User Model Transformer Class**
 
@@ -127,19 +188,24 @@ class UserController extends Controller {
 
     }
 
-    public function dependencyInjectionExample(\EGALL\Transformer\Contracts\Transformer $transformer)
+    public function dependencyInjectionExample(\EGALL\Transformer\Contracts\CollectionTransfomer $transformer)
     {
 
-        return $transformer->model($this->user)->keys(['id', 'first_name', 'last_name])->transform();
+        // Collection example
+        $transformer->collection(User::all())->keys('id', 'name')->with('school')->transform();
+
+    }
+
+    public function diExampleTwo(\EGALL\Transformer\Contracts\Transformer $transformer)
+    {
+
+        return $transformer->item($this->user)->keys(['id', 'first_name', 'last_name])->transform();
 
     }
 
 }
 
 ```
-
-
-
 
 ## Running the tests
 
