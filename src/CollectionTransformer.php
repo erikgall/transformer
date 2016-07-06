@@ -2,8 +2,8 @@
 
 namespace EGALL\Transformer;
 
-use EGALL\Transformer\Contracts\CollectionTransformer as Contract;
 use Illuminate\Support\Collection;
+use EGALL\Transformer\Contracts\CollectionTransformer as Contract;
 
 /**
  * CollectionTransformer Class
@@ -32,7 +32,7 @@ class CollectionTransformer extends BaseTransformer implements Contract
      * @param $items
      * @param bool $childTransformation
      */
-    public function __construct($items, $childTransformation = false)
+    public function __construct($items = null, $childTransformation = false)
     {
 
         parent::__construct($items);

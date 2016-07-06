@@ -34,7 +34,7 @@ class Transformer extends BaseTransformer implements Contract
      * @param Model|\Illuminate\Support\Collection $item
      * @param bool $childTransformation
      */
-    public function __construct($item, $childTransformation = false)
+    public function __construct($item = null, $childTransformation = false)
     {
 
         parent::__construct($item);
