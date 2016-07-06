@@ -14,6 +14,14 @@ use EGALL\Transformer\Contracts\CollectionTransformer as CollectionTransformerCo
  */
 class TransformerServiceProvider extends ServiceProvider
 {
+
+    /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = true;
+
     /**
      * Bootstrap the application services.
      *
@@ -31,6 +39,7 @@ class TransformerServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
         $this->app->bind(TransformerContract::class, Transformer::class);
         $this->app->bind(CollectionTransformerContract::class, CollectionTransformer::class);
     }

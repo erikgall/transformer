@@ -41,7 +41,7 @@ abstract class BaseTransformer
      *
      * @param $item
      */
-    public function __construct($item)
+    public function __construct($item = null)
     {
 
         $this->item = $item;
