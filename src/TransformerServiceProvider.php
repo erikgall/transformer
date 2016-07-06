@@ -52,7 +52,7 @@ class TransformerServiceProvider extends ServiceProvider
     public function provides()
     {
 
-        return [Transformer::class, CollectionTransformer::class];
+        return [TransformerContract::class, CollectionTransformerContract::class];
 
     }
 }
