@@ -43,4 +43,16 @@ class TransformerServiceProvider extends ServiceProvider
         $this->app->bind(TransformerContract::class, Transformer::class);
         $this->app->bind(CollectionTransformerContract::class, CollectionTransformer::class);
     }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+
+        return [Transformer::class, CollectionTransformer::class];
+
+    }
 }
