@@ -18,14 +18,33 @@ class BaseTransformerTest extends PHPUnit_Framework_TestCase
     protected $subject;
 
     /**
-     *
+     * Setup the testing environemnt.
      */
     public function setUp()
     {
 
-        $this->subject = new MockBaseTransformer(new Model());
+        $this->subject = new MockBaseTransformer(new MockModel());
 
     }
+
+    /**
+     * Test the get method.
+     *
+     * @return void
+     */
+    public function testGetAndSet()
+    {
+
+        $this->assertEmpty($this->subject->get());
+
+        $this->subject->set('name', 'User name');
+
+        $this->assertEquals(['name' => 'User name'], $this->subject->get());
+        $this->assertEquals('User name', $this->subject->get('name'));
+
+
+    }
+
     /**
      * Test checking the item is a collection.
      *
@@ -65,6 +84,7 @@ class BaseTransformerTest extends PHPUnit_Framework_TestCase
 
         // Returns $this if setting keys.
         $this->assertInstanceOf(BaseTransformer::class, $this->subject->keys(['id', 'name']));
+
         $this->assertEquals(['id', 'name'], $this->subject->keys());
 
         // If the keys are not empty it merges instead of replacing the keys

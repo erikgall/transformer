@@ -1,4 +1,8 @@
 <?php
+use EGALL\Transformer\Relationships\CollectionToCollectionRelationship;
+use EGALL\Transformer\Relationships\CollectionToModelRelationship;
+use EGALL\Transformer\Relationships\ModelToCollectionRelationship;
+use EGALL\Transformer\Relationships\ModelToModelRelationship;
 
 /**
  * Transformer PHPUnit test
@@ -11,10 +15,15 @@ class TransformerTest extends PHPUnit_Framework_TestCase
     /**
      * The mock model subject  to test.
      *
-     * @var \Model
+     * @var \MockModelTransformer
      */
     protected $subject;
 
+    /**
+     * The mock eloquent model.
+     *
+     * @var MockModel
+     */
     protected $model;
 
     /**
@@ -23,121 +32,101 @@ class TransformerTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
 
-        $this->model = new Model;
-        $this->subject = new ModelTransformer($this->model);
+        $this->model = new MockModel;
+        $this->subject = new MockModelTransformer($this->model);
 
     }
 
     /**
-     * Test checking if the model is a collection.
-     *
-     * @return void
-     */
-    public function testIsCollection()
-    {
-
-        $this->assertFalse($this->subject->isCollection($this->model));
-
-        $this->assertTrue($this->subject->isCollection(collect([$this->model])));
-
-    }
-
-    /**
-     * Test checking if an object implements the transformable contract.
-     *
-     * @return void
-     */
-    public function testIsTransformable()
-    {
-
-        $this->assertTrue($this->subject->isTransformable($this->model));
-        $this->assertFalse($this->subject->isTransformable(ModelTransformer::class));
-
-    }
-
-    /**
-     * Test setting a key, value pair.
-     *
-     * @return void
-     */
-    public function testSet()
-    {
-
-        $this->subject->set('lang', 'en');
-
-        $data = $this->subject->transform();
-
-        $this->assertArrayHasKey('lang', $data);
-        $this->assertEquals('en', $data['lang']);
-
-    }
-
-    /**
-     * Test transforming the model.
+     * Test transforming a model without relationships.
      *
      * @return void
      */
     public function testTransform()
     {
 
-        $this->assertEquals($this->transformedModelArray(), $this->subject->transform());
+        $this->assertEquals($this->defaultTransformArray(), $this->subject->transform());
 
     }
 
     /**
-     * Test transforming a collection.
+     * Test transforming with only single relationships.
      *
      * @return void
      */
-    public function testTransformCollection()
+    public function testTransformingWithOneToRelationships()
     {
 
-        $collection = collect([$this->model, new Model()]);
+        $this->subject->with('model');
+        $this->subject->with('models');
 
-        $expected = [$this->transformedModelArray(), $this->transformedModelArray()];
+        $expected = $this->defaultTransformArray();
+        $expected['model'] = $this->defaultTransformArray();
+        $expected['models'] = [
+            $this->defaultTransformArray(), $this->defaultTransformArray()
+        ];
 
-        $this->assertEquals($expected, (new ModelTransformer($collection))->transform());
+        $this->assertEquals($expected, $this->subject->transform());
     }
 
     /**
-     * Test lazy loading a model.
+     * Test transforming nested relationships.
      *
      * @return void
      */
-    public function testLazyLoadingASingularRelationship()
+    public function testTransformingWithNestedRelationships()
     {
 
-        $expected = $this->transformedModelArray();
-        $expected['school'] = $this->transformedModelArray();
+        $this->subject->with('model.collections.model', 'collections.models');
 
-        $this->assertEquals($expected, $this->subject->with('school')->transform());
+        $expected = $this->defaultTransformArray();
+        $expected['model'] = $this->defaultTransformArray();
+        $expected['model']['collections'] = [$this->defaultTransformArray(), $this->defaultTransformArray()];
+        $expected['model']['collections'][0]['model'] = $this->defaultTransformArray();
+        $expected['model']['collections'][1]['model'] = $this->defaultTransformArray();
+        $expected['collections'] = [$this->defaultTransformArray(), $this->defaultTransformArray()];
+        $expected['collections'][0]['models'] = [$this->defaultTransformArray(), $this->defaultTransformArray()];
+        $expected['collections'][1]['models'] = [$this->defaultTransformArray(), $this->defaultTransformArray()];
+
+        $this->assertEquals($expected, $this->subject->transform());
+    }
+
+    /**
+     * Test the with method.
+     *
+     * @return void
+     */
+    public function testWith()
+    {
+
+        $this->assertEquals([], $this->subject->with());
+
+        $this->assertInstanceOf(MockModelTransformer::class, $this->subject->with('course'));
+
+        $this->assertArrayHasKey('course', $this->subject->with());
 
     }
 
-    public function testLazyLoadingAHasManyRelationship()
+    /**
+     *
+     */
+    public function testWithModelToModelAndModelToCollection()
     {
 
-        $expected = $this->transformedModelArray();
-        $expected['schools'] = [$this->transformedModelArray(), $this->transformedModelArray()];
+        $this->subject->with('model');
+        $this->subject->with('models.model');
 
-        $this->assertEquals($expected, $this->subject->with('schools')->transform());
+        $relationships = $this->subject->with();
+
+        $this->assertInstanceOf(ModelToModelRelationship::class, $relationships['model']);
+        $this->assertInstanceOf(ModelToCollectionRelationship::class, $relationships['models.model']);
 
     }
 
-    public function testLazyLoadingANestedRelationship()
-    {
-
-        $expected = $this->transformedModelArray();
-        $expected['schools'][] = $this->transformedModelArray();
-        $expected['schools'][] = $this->transformedModelArray();
-        $expected['schools'][0]['course'] = $this->transformedModelArray();
-        $expected['schools'][1]['course'] = $this->transformedModelArray();
-        $actual = $this->subject->with('schools.course')->transform();
-        $this->assertEquals($expected, $actual);
-
-    }
-
-    protected function transformedModelArray()
+    /**
+     * @return array
+     */
+    protected function defaultTransformArray()
     {
 
         return [
@@ -145,4 +134,5 @@ class TransformerTest extends PHPUnit_Framework_TestCase
             'name' => $this->model->first_name . ' ' . $this->model->last_name
         ];
     }
+
 }

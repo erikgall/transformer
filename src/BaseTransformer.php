@@ -3,10 +3,11 @@
 namespace EGALL\Transformer;
 
 use EGALL\Transformer\Contracts\Transformable;
+use EGALL\Transformer\Exceptions\PropertyDoesNotExist;
 use Illuminate\Support\Collection;
 
 /**
- * BaseTransformer Class
+ * Base transformer class.
  *
  * @package EGALL\Transformer
  * @author Erik Galloway <erik@mybarnapp.com>
@@ -36,13 +37,6 @@ abstract class BaseTransformer
     protected $keys = [];
 
     /**
-     * The relationships to be included in the data array.
-     * 
-     * @var array
-     */
-    protected $relationships = [];
-
-    /**
      * BaseTransformer constructor.
      *
      * @param $item
@@ -55,6 +49,27 @@ abstract class BaseTransformer
     }
 
     /**
+     * Get the data array or a data array key.
+     * 
+     * @param null|string $key
+     * @return array|mixed
+     */
+    public function get($key = null)
+    {
+
+        if (is_null($key)) {
+            
+            return $this->data;
+            
+        }
+        
+        return $this->data[$key];
+        
+    }
+
+    /**
+     * Check if an item is a collection.
+     * 
      * @param null $item
      * @return bool
      */
@@ -72,6 +87,8 @@ abstract class BaseTransformer
     }
 
     /**
+     * Check if an item implements the transformable contract.
+     * 
      * @param null $item
      * @return bool
      */
@@ -108,6 +125,21 @@ abstract class BaseTransformer
     }
 
     /**
+     * Set a key value pair.
+     *
+     * @param string $key
+     * @param $value
+     * @return $this
+     */
+    public function set($key, $value)
+    {
+
+        $this->data[$key] = $value;
+        
+        return $this;
+    }
+
+    /**
      * Transform the item to an array.
      *
      * @return array
@@ -120,10 +152,44 @@ abstract class BaseTransformer
     }
 
     /**
+     * Allow dynamic access the retrieving data keys.
+     *
+     * @param string $key
+     * @return mixed
+     * @throws \EGALL\Transformer\Exceptions\PropertyDoesNotExist
+     */
+    public function __get($key)
+    {
+
+        if (array_key_exists($key, $this->data)) {
+
+            return $this->data[$key];
+
+        }
+
+        throw new PropertyDoesNotExist("The property {$key} does not exist in the data array.");
+
+    }
+
+    /**
+     * Allow dynamic access to the data array.
+     *
+     * @param string $key
+     * @param $value
+     */
+    public function __set($key, $value)
+    {
+
+        $this->set($key, $value);
+
+    }
+
+    /**
      * Get the data in array format.
      *
      * @return array
      */
-    abstract public function toArray();
+    abstract protected function toArray();
+
 
 }

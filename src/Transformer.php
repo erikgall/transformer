@@ -2,352 +2,169 @@
 
 namespace EGALL\Transformer;
 
-use EGALL\Transformer\Contracts\Transformer as TransformerContract;
-use Illuminate\Support\Collection;
-use EGALL\Transformer\Contracts\Transformable;
-use EGALL\Transformer\Exceptions\PropertyDoesNotExist;
+use EGALL\Transformer\Contracts\Transformer as Contract;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * Base eloquent model transformer.
+ * Transformer Class
  *
  * @package EGALL\Transformer
  * @author Erik Galloway <erik@mybarnapp.com>
  */
-class Transformer implements TransformerContract
+class Transformer extends BaseTransformer implements Contract
 {
 
     /**
-     * The transformed data array to return.
+     * The relationships to be included in the data array.
      *
      * @var array
      */
-    protected $data = [];
+    protected $relationships = [];
 
     /**
-     * The keys to include in the transformed model.
+     * Is the transformation a child transformation.
      *
-     * @var array
+     * @var bool
      */
-    protected $keys = [];
-
-    /**
-     * The model or model collection to be transformed.
-     *
-     * @var \Illuminate\Database\Eloquent\Model|Collection
-     */
-    protected $model;
-
-    /**
-     * The model relationships to be included in the transformed array.
-     *
-     * @var array
-     */
-    protected $with = [];
+    protected $childTransformation;
 
     /**
      * Transformer constructor.
      *
-     * @param $model
+     * @param Model|\Illuminate\Support\Collection $item
+     * @param bool $childTransformation
      */
-    public function __construct($model = null)
+    public function __construct($item, $childTransformation = false)
     {
 
-        $this->model = $model;
+        parent::__construct($item);
+
+        $this->childTransformation = $childTransformation;
 
     }
 
     /**
-     * Get the transformed data array.
+     * Set the child transformation property.
      *
-     * @param string|null $key
-     * @return array
-     */
-    public function get($key = null)
-    {
-
-        if (is_null($key)) {
-
-            return $this->data;
-
-        }
-
-        return $this->data[$key];
-
-    }
-
-    /**
-     * Get the transformed array keys.
-     *
-     * @return array
-     */
-    public function getKeys()
-    {
-
-        return $this->keys;
-
-    }
-
-    /**
-     * Check if the model is actually a collection.
-     *
-     * @param $object
-     * @return bool
-     */
-    public function isCollection($object)
-    {
-
-        return ($object instanceof Collection);
-
-    }
-
-    /**
-     * Check if the model implements the transformable contract.
-     *
-     * @param $object
-     * @return bool
-     */
-    public function isTransformable($object)
-    {
-
-        return in_array(Transformable::class, class_implements($object));
-
-    }
-
-    /**
-     * Set the with array so collections don't see n+1 problem.
-     * 
-     * @param array $relationships
+     * @param bool $childTransformation
      * @return $this
      */
-    public function loadRelationships(array $relationships)
-    {
-        
-        $this->with = $relationships;
-
-        return $this;
-        
-    }
-
-    /**
-     * Set the model or collection.
-     *
-     * @param \Illuminate\Database\Eloquent\Model|\Illuminate\Support\Collection $model
-     * @return $this
-     */
-    public function model($model)
+    public function childTransformation(bool $childTransformation)
     {
 
-        if ($this->isCollection($model)) {
-
-            return new TransformableCollection($model);
-
-        }
-
-        $this->model = $model;
+        $this->childTransformation = $childTransformation;
 
         return $this;
     }
 
     /**
-     * Set a key in the transformed array.
+     * Set the model to transform.
      *
-     * @param string $key
-     * @param $value
-     * @return $this
+     * @param Model $model
+     * @return Contract
      */
-    public function set($key, $value)
+    public function item($model)
     {
 
-        $this->data[$key] = $value;
+        $this->item = $model;
 
         return $this;
-
     }
 
     /**
-     * Set the model keys to be used when transforming.
+     * Get or set the model's to lazy load and include in the data array.
      *
-     * @param array $keys
-     * @return $this
-     */
-    public function setKeys(array $keys)
-    {
-
-        $this->keys = $keys;
-
-        return $this;
-
-    }
-
-    /**
-     * Transform the model into an array.
-     *
-     * @return array
-     */
-    public function transform()
-    {
-
-        return $this->isCollection($this->model) ?
-            $this->transformCollection() : $this->toArray();
-
-    }
-
-    /**
-     * Transform a collection.
-     *
-     * @return array
-     */
-    public function transformCollection()
-    {
-
-        $collection = $this->model->map(function ($model) {
-
-            if ($this->isTransformable($model)) {
-
-                return $model->transform();
-
-            }
-
-            return $model->toArray();
-
-        });
-
-        return $collection->toArray();
-    }
-
-    /**
-     * Lazy load a model relationship.
-     *
-     * @return $this
+     * @return array|\EGALL\Transformer\Transformer
      */
     public function with()
     {
 
-        if (func_num_args() == 0) {
-            return $this->with;
+        if (func_num_args() < 1) {
+
+            return $this->relationships;
         }
 
-        $this->model->load($models = func_get_args());
+        return $this->loadRelationships(func_get_args());
 
-        foreach ($models as $name) {
-
-            $this->with[] = new TransformedRelationship($this->model, $name);
-
-        }
-
-        return $this;
     }
 
     /**
-     * Allow magic access to the data array.
-     *
-     * @param $key
-     * @return mixed
-     * @throws \Exception
+     * @param $name
      */
-    public function __get($key)
+    protected function addRelationship($name)
     {
 
-        if (array_key_exists($key, $this->data)) {
-
-            return $this->data[$key];
-
-        }
-
-        throw new PropertyDoesNotExist("The property {$key} does not exist in the data array.");
+        $this->relationships[$name] = RelationshipFactory::build($this->item, $name);
 
     }
 
     /**
-     * Allow data attributes to be set magically.
-     *
-     * @param string $key
-     * @param $value
-     */
-    public function __set($key, $value)
-    {
-
-        $this->set($key, $value);
-
-    }
-
-    /**
-     * Check if an array key exists.
-     *
-     * @param $key
-     * @return bool
-     */
-    public function __isset($key)
-    {
-
-        return array_key_exists($key, $this->data);
-
-    }
-
-    /**
-     * Get the attribute method name.
-     *
-     * @param string $key
-     * @return string
-     */
-    protected function getAttributeMethodName($key)
-    {
-
-        return 'get' . ucfirst(camel_case($key)) . 'Attribute';
-    }
-
-    /**
-     * Set the data from the keys.
-     *
      * @return $this
      */
-    protected function setDataFromKeys()
+    protected function getKeyData()
     {
 
         foreach ($this->keys as $key) {
 
-            if (method_exists($this, $method = $this->getAttributeMethodName($key))) {
+            $method = 'get' . ucfirst(camel_case($key)) . 'Attribute';
 
-                $this->{$key} = $this->$method();
-
-            } else {
-
-                $this->{$key} = $this->model->{$key};
-
-            }
+            $this->set($key, method_exists($this, $method) ? $this->$method($this->item) : $this->item->{$key});
 
         }
 
         return $this;
-
     }
 
     /**
      * @return $this
      */
-    protected function setRelationshipData()
+    protected function getRelationshipData()
     {
 
-        foreach ($this->with as $relationship) {
+        foreach ($this->relationships as $data) {
 
-            $this->{$relationship->key()} = $relationship->transform();
+            $this->set($data->key(), $data->transform());
 
         }
 
         return $this;
-
     }
 
     /**
-     * Transform the model into an array.
+     * Load the relationships.
+     *
+     * @param array $models
+     * @return $this
+     */
+    protected function loadRelationships(array $models)
+    {
+
+        foreach ($models as $key => $load) {
+
+            if (!$this->childTransformation) {
+
+                $this->item->load($load);
+
+            }
+
+            $name = is_string($key) ? $key : $load;
+
+            $this->addRelationship($name);
+
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the data in array format.
      *
      * @return array
      */
     protected function toArray()
     {
 
-        return $this->setDataFromKeys()->setRelationshipData()->get();
+        return $this->getKeyData()->getRelationshipData()->get();
 
     }
-
 }

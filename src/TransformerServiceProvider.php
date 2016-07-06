@@ -4,7 +4,7 @@ namespace EGALL\Transformer;
 
 use Illuminate\Support\ServiceProvider;
 use EGALL\Transformer\Contracts\Transformer as TransformerContract;
-use EGALL\Transformer\Contracts\TransformableCollection as TransformableCollectionContract;
+use EGALL\Transformer\Contracts\CollectionTransformer as CollectionTransformerContract;
 
 /**
  * Transformer service provider.
@@ -32,6 +32,6 @@ class TransformerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(TransformerContract::class, Transformer::class);
-        $this->app->bind(TransformableCollectionContract::class, TransformableCollection::class);
+        $this->app->bind(CollectionTransformerContract::class, CollectionTransformer::class);
     }
 }

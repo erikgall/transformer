@@ -28,14 +28,15 @@ trait TransformableModel
     /**
      * Get the model's transformer.
      *
+     * @param bool $nested
      * @return \EGALL\Transformer\Transformer
      */
-    public function transformer()
+    public function transformer($nested = false)
     {
 
         $transformer = $this->transformerClass();
 
-        return new $transformer($this);
+        return new $transformer($this, $nested);
 
     }
 

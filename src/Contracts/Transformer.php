@@ -3,6 +3,12 @@
 namespace EGALL\Transformer\Contracts;
 
 /**
+ * Base transformer interface contract.
+ *
+ * @package EGALL\Transformer
+ * @author Erik Galloway <erik@mybarnapp.com>
+ */
+/**
  * Transformer interface contract.
  *
  * @package EGALL\Transformer\Contracts
@@ -12,87 +18,20 @@ interface Transformer
 {
 
     /**
-     * Get the transformed data array.
+     * Set the model to transform.
      *
-     * @param string|null $key
-     * @return array
-     */
-    public function get($key = null);
-
-    /**
-     * Get the transformed array keys.
-     *
-     * @return array
-     */
-    public function getKeys();
-
-    /**
-     * Check if the model is actually a collection.
-     *
-     * @param $object
-     * @return bool
-     */
-    public function isCollection($object);
-
-    /**
-     * Check if the model implements the transformable contract.
-     *
-     * @param $object
-     * @return bool
-     */
-    public function isTransformable($object);
-
-    /**
-     * Set the with relationship array.
-     *
-     * @param array $with
-     * @return $this
-     */
-    public function loadRelationships(array $with);
-
-    /**
-     * Set the model or collection.
-     * 
      * @param \Illuminate\Database\Eloquent\Model|\Illuminate\Support\Collection $model
      * @return $this
      */
-    public function model($model);
+    public function item($model);
 
     /**
-     * Set a key in the transformed array.
+     * Set the sub-transformation property.
      *
-     * @param string $key
-     * @param $value
-     * @return \EGALL\Transformer\Transformer
+     * @param bool $childTransformation
+     * @return $this
      */
-    public function set($key, $value);
+    public function childTransformation(bool $childTransformation);
 
-    /**
-     * Set the model keys to be used when transforming.
-     *
-     * @param array $keys
-     * @return \EGALL\Transformer\Transformer
-     */
-    public function setKeys(array $keys);
 
-    /**
-     * Transform the model into an array.
-     *
-     * @return array
-     */
-    public function transform();
-
-    /**
-     * Transform a collection.
-     *
-     * @return array
-     */
-    public function transformCollection();
-
-    /**
-     * Lazy load a model relationship.
-     *
-     * @return \EGALL\Transformer\Transformer
-     */
-    public function with();
 }
