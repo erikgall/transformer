@@ -119,6 +119,10 @@ abstract class BaseTransformer
 
         }
 
+        if (!is_array($keys)) {
+            $keys = (array) $keys;
+        }
+
         $this->keys = count($this->keys) ? array_merge($this->keys, $keys) : $keys;
 
         return $this;

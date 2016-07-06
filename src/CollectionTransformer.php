@@ -21,6 +21,7 @@ class CollectionTransformer extends BaseTransformer implements Contract
      */
     protected $childTransformation;
 
+    protected $keys = [];
     /**
      * @var string
      */
@@ -68,6 +69,12 @@ class CollectionTransformer extends BaseTransformer implements Contract
         return $this;
     }
 
+    public function hasAppend()
+    {
+
+        return count($this->keys) > 0;
+
+    }
     /**
      * Does the collection have any relationships.
      *
@@ -137,18 +144,28 @@ class CollectionTransformer extends BaseTransformer implements Contract
 
             if ($this->isTransformable($model)) {
 
+
                 if ($this->hasRelationships()) {
 
                     $transformer = $model->transformer(true);
+
+                    if ($this->hasAppend()) {
+                        $transformer->keys($this->keys);
+                    }
 
                     foreach ($this->relationships as $relationship) {
 
                         $transformer->with($relationship);
 
+
                     }
 
                     return $transformer->transform();
 
+                }
+
+                if ($this->hasAppend()) {
+                    return $model->transformer()->keys($this->keys)->transform();
                 }
 
                 return $model->transform();

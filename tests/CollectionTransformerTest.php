@@ -16,7 +16,7 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
      * @var \Illuminate\Support\Collection
      */
     protected $collection;
-
+    
     /**
      * The testing subject.
      *
@@ -34,6 +34,24 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
 
         $this->collection = new MockCollection([$this->newModel(), $this->newModel()]);
         $this->subject = new CollectionTransformer($this->collection, true);
+
+    }
+
+    /**
+     * Test appending keys to a collection.
+     *
+     * @return void
+     */
+    public function testAppendingKeysToACollection()
+    {
+
+        $expected = [$this->defaultTransformArray(), $this->defaultTransformArray()];
+        $expected[0]['initials'] = 'FL';
+        $expected[1]['initials'] = 'FL';
+
+        $actual = $this->subject->keys('initials')->transform();
+
+        $this->assertEquals($expected, $actual);
 
     }
 

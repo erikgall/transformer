@@ -28,4 +28,16 @@ class MockModelTransformer extends Transformer
         return $item->first_name . ' ' . $item->last_name;
 
     }
+
+    /**
+     * Get the initials attribute.
+     *
+     * @param $item
+     * @return string
+     */
+    public function getInitialsAttribute($item)
+    {
+
+        return strtoupper($item->first_name[0] . $item->last_name[0]);
+    }
 }
