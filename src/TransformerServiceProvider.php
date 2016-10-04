@@ -9,12 +9,10 @@ use EGALL\Transformer\Contracts\CollectionTransformer as CollectionTransformerCo
 /**
  * Transformer service provider.
  *
- * @package EGALL\Transformer
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class TransformerServiceProvider extends ServiceProvider
 {
-
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -39,7 +37,6 @@ class TransformerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
         $this->app->bind(TransformerContract::class, Transformer::class);
         $this->app->bind(CollectionTransformerContract::class, CollectionTransformer::class);
     }
@@ -51,8 +48,6 @@ class TransformerServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-
         return [TransformerContract::class, CollectionTransformerContract::class];
-
     }
 }

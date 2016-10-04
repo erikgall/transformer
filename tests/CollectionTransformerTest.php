@@ -3,20 +3,19 @@
 use EGALL\Transformer\CollectionTransformer;
 
 /**
- * CollectionTransformerTest Class
+ * CollectionTransformerTest Class.
  *
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class CollectionTransformerTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * The collection of model's.
      *
      * @var \Illuminate\Support\Collection
      */
     protected $collection;
-    
+
     /**
      * The testing subject.
      *
@@ -31,10 +30,8 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-
         $this->collection = new MockCollection([$this->newModel(), $this->newModel()]);
         $this->subject = new CollectionTransformer($this->collection, true);
-
     }
 
     /**
@@ -44,7 +41,6 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testAppendingKeysToACollection()
     {
-
         $expected = [$this->defaultTransformArray(), $this->defaultTransformArray()];
         $expected[0]['initials'] = 'FL';
         $expected[1]['initials'] = 'FL';
@@ -52,7 +48,6 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
         $actual = $this->subject->keys('initials')->transform();
 
         $this->assertEquals($expected, $actual);
-
     }
 
     /**
@@ -62,17 +57,15 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testTransform()
     {
-
         $transformedArray = $this->defaultTransformArray();
 
         $expected = [$transformedArray, $transformedArray];
 
         $this->assertEquals($expected, $this->subject->transform());
-
     }
 
     /**
-     * Test loading relationships
+     * Test loading relationships.
      *
      * @return void
      */
@@ -85,7 +78,6 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
         $expected[1]['model'] = $transformedArray;
 
         $this->assertEquals($expected, $this->subject->with('model')->transform());
-
     }
 
     /**
@@ -95,7 +87,6 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testTransformingWithNestedRelationships()
     {
-
         $transformedArray = $this->defaultTransformArray();
 
         $collection = [$transformedArray, $transformedArray];
@@ -118,7 +109,6 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
         $expected[1] = $expected[0];
 
         $this->assertEquals($expected, $this->subject->with('models.collections.model')->transform());
-
     }
 
     /**
@@ -128,15 +118,13 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
      */
     protected function defaultTransformArray()
     {
-
         $model = $this->newModel();
 
         return [
             'id'   => $model->id,
-            'name' => $model->first_name . ' ' . $model->last_name
+            'name' => $model->first_name.' '.$model->last_name,
         ];
     }
-
 
     /**
      * Get a new mock model.
@@ -145,8 +133,6 @@ class CollectionTransformerTest extends PHPUnit_Framework_TestCase
      */
     protected function newModel()
     {
-
         return new MockModel();
-
     }
 }

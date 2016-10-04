@@ -1,17 +1,15 @@
 <?php
-use EGALL\Transformer\Relationships\CollectionToCollectionRelationship;
-use EGALL\Transformer\Relationships\CollectionToModelRelationship;
+
 use EGALL\Transformer\Relationships\ModelToCollectionRelationship;
 use EGALL\Transformer\Relationships\ModelToModelRelationship;
 
 /**
- * Transformer PHPUnit test
+ * Transformer PHPUnit test.
  *
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class TransformerTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * The mock model subject  to test.
      *
@@ -31,10 +29,8 @@ class TransformerTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-
         $this->model = new MockModel;
         $this->subject = new MockModelTransformer($this->model);
-
     }
 
     /**
@@ -44,9 +40,7 @@ class TransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testTransform()
     {
-
         $this->assertEquals($this->defaultTransformArray(), $this->subject->transform());
-
     }
 
     /**
@@ -56,14 +50,13 @@ class TransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testTransformingWithOneToRelationships()
     {
-
         $this->subject->with('model');
         $this->subject->with('models');
 
         $expected = $this->defaultTransformArray();
         $expected['model'] = $this->defaultTransformArray();
         $expected['models'] = [
-            $this->defaultTransformArray(), $this->defaultTransformArray()
+            $this->defaultTransformArray(), $this->defaultTransformArray(),
         ];
 
         $this->assertEquals($expected, $this->subject->transform());
@@ -76,7 +69,6 @@ class TransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testTransformingWithNestedRelationships()
     {
-
         $this->subject->with('model.collections.model', 'collections.models');
 
         $expected = $this->defaultTransformArray();
@@ -98,13 +90,11 @@ class TransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testWith()
     {
-
         $this->assertEquals([], $this->subject->with());
 
         $this->assertInstanceOf(MockModelTransformer::class, $this->subject->with('course'));
 
         $this->assertArrayHasKey('course', $this->subject->with());
-
     }
 
     /**
@@ -112,7 +102,6 @@ class TransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testWithModelToModelAndModelToCollection()
     {
-
         $this->subject->with('model');
         $this->subject->with('models.model');
 
@@ -120,7 +109,6 @@ class TransformerTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(ModelToModelRelationship::class, $relationships['model']);
         $this->assertInstanceOf(ModelToCollectionRelationship::class, $relationships['models.model']);
-
     }
 
     /**
@@ -128,11 +116,9 @@ class TransformerTest extends PHPUnit_Framework_TestCase
      */
     protected function defaultTransformArray()
     {
-
         return [
             'id'   => $this->model->id,
-            'name' => $this->model->first_name . ' ' . $this->model->last_name
+            'name' => $this->model->first_name.' '.$this->model->last_name,
         ];
     }
-
 }

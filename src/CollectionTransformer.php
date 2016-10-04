@@ -6,14 +6,12 @@ use Illuminate\Support\Collection;
 use EGALL\Transformer\Contracts\CollectionTransformer as Contract;
 
 /**
- * CollectionTransformer Class
+ * CollectionTransformer Class.
  *
- * @package EGALL\Transformer
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class CollectionTransformer extends BaseTransformer implements Contract
 {
-
     /**
      * Is this transform a nested transformation.
      *
@@ -35,7 +33,6 @@ class CollectionTransformer extends BaseTransformer implements Contract
      */
     public function __construct($items = null, $childTransformation = false)
     {
-
         parent::__construct($items);
 
         $this->childTransformation = $childTransformation;
@@ -49,7 +46,6 @@ class CollectionTransformer extends BaseTransformer implements Contract
      */
     public function childTransformation(bool $childTransformation)
     {
-
         $this->childTransformation = $childTransformation;
 
         return $this;
@@ -63,7 +59,6 @@ class CollectionTransformer extends BaseTransformer implements Contract
      */
     public function collection(Collection $collection)
     {
-
         $this->item = $collection;
 
         return $this;
@@ -71,9 +66,7 @@ class CollectionTransformer extends BaseTransformer implements Contract
 
     public function hasAppend()
     {
-
         return count($this->keys) > 0;
-
     }
     /**
      * Does the collection have any relationships.
@@ -82,9 +75,7 @@ class CollectionTransformer extends BaseTransformer implements Contract
      */
     public function hasRelationships()
     {
-
         return count($this->relationships) > 0;
-
     }
 
     /**
@@ -94,9 +85,7 @@ class CollectionTransformer extends BaseTransformer implements Contract
      */
     public function toArray()
     {
-
         return $this->item->map($this->transformCollectionClosure())->toArray();
-
     }
 
     /**
@@ -104,49 +93,32 @@ class CollectionTransformer extends BaseTransformer implements Contract
      */
     public function with()
     {
-
         if (func_num_args() < 1) {
-
             return $this->relationships;
-
         }
 
         $models = func_get_args();
 
         if (!$this->childTransformation) {
-
             $this->item->load($models);
-
         }
 
         foreach ($models as $key => $name) {
-
             if (is_string($key)) {
-
                 $this->relationships[] = $key;
-
             } else {
-
                 $this->relationships[] = $name;
-
             }
-
         }
 
         return $this;
-
     }
 
     protected function transformCollectionClosure()
     {
-
         return function ($model) {
-
             if ($this->isTransformable($model)) {
-
-
                 if ($this->hasRelationships()) {
-
                     $transformer = $model->transformer(true);
 
                     if ($this->hasAppend()) {
@@ -154,14 +126,10 @@ class CollectionTransformer extends BaseTransformer implements Contract
                     }
 
                     foreach ($this->relationships as $relationship) {
-
                         $transformer->with($relationship);
-
-
                     }
 
                     return $transformer->transform();
-
                 }
 
                 if ($this->hasAppend()) {
@@ -169,12 +137,9 @@ class CollectionTransformer extends BaseTransformer implements Contract
                 }
 
                 return $model->transform();
-
             }
 
             return $model->toArray();
-
         };
-
     }
 }

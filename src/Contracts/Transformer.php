@@ -5,18 +5,15 @@ namespace EGALL\Transformer\Contracts;
 /**
  * Base transformer interface contract.
  *
- * @package EGALL\Transformer
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 /**
  * Transformer interface contract.
  *
- * @package EGALL\Transformer\Contracts
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 interface Transformer
 {
-
     /**
      * Set the model to transform.
      *
@@ -32,6 +29,4 @@ interface Transformer
      * @return $this
      */
     public function childTransformation(bool $childTransformation);
-
-
 }

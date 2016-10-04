@@ -4,7 +4,6 @@ use EGALL\Transformer\BaseTransformer;
 
 class MockBaseTransformer extends BaseTransformer
 {
-
     /**
      * Get the data in array format.
      *

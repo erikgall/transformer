@@ -3,13 +3,12 @@
 use EGALL\Transformer\BaseTransformer;
 
 /**
- * BaseTransformerTest Class
+ * BaseTransformerTest Class.
  *
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class BaseTransformerTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * The test subject.
      *
@@ -22,9 +21,7 @@ class BaseTransformerTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-
         $this->subject = new MockBaseTransformer(new MockModel());
-
     }
 
     /**
@@ -34,15 +31,12 @@ class BaseTransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testGetAndSet()
     {
-
         $this->assertEmpty($this->subject->get());
 
         $this->subject->set('name', 'User name');
 
         $this->assertEquals(['name' => 'User name'], $this->subject->get());
         $this->assertEquals('User name', $this->subject->get('name'));
-
-
     }
 
     /**
@@ -52,10 +46,8 @@ class BaseTransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testIsCollection()
     {
-
         $this->assertFalse($this->subject->isCollection());
         $this->assertTrue($this->subject->isCollection(collect([])));
-
     }
 
     /**
@@ -65,10 +57,8 @@ class BaseTransformerTest extends PHPUnit_Framework_TestCase
      */
     public function testIsTransformable()
     {
-
         $this->assertTrue($this->subject->isTransformable());
         $this->assertFalse($this->subject->isTransformable(collect([])));
-
     }
 
     /**
@@ -89,7 +79,5 @@ class BaseTransformerTest extends PHPUnit_Framework_TestCase
 
         // If the keys are not empty it merges instead of replacing the keys
         $this->assertEquals(['id', 'name', 'lang'], $this->subject->keys(['lang'])->keys());
-
     }
-
 }

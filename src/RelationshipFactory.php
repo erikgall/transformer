@@ -9,14 +9,12 @@ use EGALL\Transformer\Relationships\ModelToModelRelationship;
 use Illuminate\Support\Collection;
 
 /**
- * RelationshipFactory Class
+ * RelationshipFactory Class.
  *
- * @package EGALL\Transformer
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class RelationshipFactory
 {
-
     /**
      * Is the parent item a collection.
      *
@@ -55,12 +53,10 @@ class RelationshipFactory
      */
     private function __construct($item, $key, $collection = false, $childCollection = false)
     {
-        
         $this->item = $item;
         $this->key = $key;
         $this->collection = $collection;
         $this->childCollection = $childCollection;
-
     }
 
     /**
@@ -70,11 +66,8 @@ class RelationshipFactory
      */
     public function make()
     {
-
         if ($this->collection) {
-
             return $this->makeCollectionToRelationship();
-
         }
 
         return $this->makeModelToRelationship();
@@ -87,14 +80,11 @@ class RelationshipFactory
      */
     protected function makeCollectionToRelationship()
     {
-
         if ($this->childCollection) {
-
             return new CollectionToCollectionRelationship($this->item, $this->key);
         }
 
         return new CollectionToModelRelationship($this->item, $this->key);
-
     }
 
     /**
@@ -104,7 +94,6 @@ class RelationshipFactory
      */
     protected function makeModelToRelationship()
     {
-
         if ($this->childCollection) {
             return new ModelToCollectionRelationship($this->item, $this->key);
         }
@@ -119,9 +108,7 @@ class RelationshipFactory
      */
     public static function build($item, $key)
     {
-        
         if (static::isCollection($item)) {
-
             return static::makeCollectionRelationship($item, $key);
         }
 
@@ -134,9 +121,7 @@ class RelationshipFactory
      */
     protected static function getRelationshipName($key)
     {
-
         return str_contains($key, '.') ? array_first(explode('.', $key)) : $key;
-
     }
 
     /**
@@ -146,18 +131,13 @@ class RelationshipFactory
      */
     protected static function makeCollectionRelationship($item, $key)
     {
-
         $name = static::getRelationshipName($key);
 
         if ($item->first(static::hasCollectionCallback($name))) {
-
             return (new static($item, $key, true, true))->make();
-
         }
 
         return (new static($item, $key, true, false))->make();
-
-
     }
 
     /**
@@ -167,13 +147,10 @@ class RelationshipFactory
      */
     protected static function makeModelRelationship($item, $key)
     {
-
         $name = static::getRelationshipName($key);
 
         if (static::isCollection($item->{$name})) {
-
             return (new static($item, $key, false, true))->make();
-
         }
 
         return (new static($item, $key))->make();
@@ -185,9 +162,7 @@ class RelationshipFactory
      */
     protected static function isCollection($item)
     {
-
         return $item instanceof Collection;
-        
     }
 
     /**
@@ -196,11 +171,8 @@ class RelationshipFactory
      */
     protected static function hasCollectionCallback($key)
     {
-
-        return function($model) use ($key) {
-
+        return function ($model) use ($key) {
             return static::isCollection($model->{$key});
-
         };
     }
 }

@@ -9,12 +9,10 @@ use Illuminate\Support\Collection;
 /**
  * Base transformer class.
  *
- * @package EGALL\Transformer
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 abstract class BaseTransformer
 {
-
     /**
      * The transformed item data array.
      * 
@@ -43,9 +41,7 @@ abstract class BaseTransformer
      */
     public function __construct($item = null)
     {
-
         $this->item = $item;
-
     }
 
     /**
@@ -56,15 +52,11 @@ abstract class BaseTransformer
      */
     public function get($key = null)
     {
-
         if (is_null($key)) {
-            
             return $this->data;
-            
         }
-        
+
         return $this->data[$key];
-        
     }
 
     /**
@@ -75,15 +67,11 @@ abstract class BaseTransformer
      */
     public function isCollection($item = null)
     {
-
         if (is_null($item)) {
-
             $item = $this->item;
-
         }
 
         return ($item instanceof Collection);
-
     }
 
     /**
@@ -94,14 +82,11 @@ abstract class BaseTransformer
      */
     public function isTransformable($item = null)
     {
-
         if (is_null($item)) {
-
             $item = $this->item;
         }
 
         return in_array(Transformable::class, class_implements($item));
-
     }
 
     /**
@@ -112,11 +97,8 @@ abstract class BaseTransformer
      */
     public function keys($keys = null)
     {
-
         if (is_null($keys)) {
-
             return $this->keys;
-
         }
 
         if (!is_array($keys)) {
@@ -137,9 +119,8 @@ abstract class BaseTransformer
      */
     public function set($key, $value)
     {
-
         $this->data[$key] = $value;
-        
+
         return $this;
     }
 
@@ -150,9 +131,7 @@ abstract class BaseTransformer
      */
     public function transform()
     {
-
         return $this->toArray();
-
     }
 
     /**
@@ -164,15 +143,11 @@ abstract class BaseTransformer
      */
     public function __get($key)
     {
-
         if (array_key_exists($key, $this->data)) {
-
             return $this->data[$key];
-
         }
 
         throw new PropertyDoesNotExist("The property {$key} does not exist in the data array.");
-
     }
 
     /**
@@ -183,9 +158,7 @@ abstract class BaseTransformer
      */
     public function __set($key, $value)
     {
-
         $this->set($key, $value);
-
     }
 
     /**
@@ -194,6 +167,4 @@ abstract class BaseTransformer
      * @return array
      */
     abstract protected function toArray();
-
-
 }

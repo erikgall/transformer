@@ -6,14 +6,12 @@ use EGALL\Transformer\Contracts\Transformer as Contract;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Transformer Class
+ * Transformer Class.
  *
- * @package EGALL\Transformer
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class Transformer extends BaseTransformer implements Contract
 {
-
     /**
      * The relationships to be included in the data array.
      *
@@ -36,11 +34,9 @@ class Transformer extends BaseTransformer implements Contract
      */
     public function __construct($item = null, $childTransformation = false)
     {
-
         parent::__construct($item);
 
         $this->childTransformation = $childTransformation;
-
     }
 
     /**
@@ -51,7 +47,6 @@ class Transformer extends BaseTransformer implements Contract
      */
     public function childTransformation(bool $childTransformation)
     {
-
         $this->childTransformation = $childTransformation;
 
         return $this;
@@ -65,7 +60,6 @@ class Transformer extends BaseTransformer implements Contract
      */
     public function item($model)
     {
-
         $this->item = $model;
 
         return $this;
@@ -78,14 +72,11 @@ class Transformer extends BaseTransformer implements Contract
      */
     public function with()
     {
-
         if (func_num_args() < 1) {
-
             return $this->relationships;
         }
 
         return $this->loadRelationships(func_get_args());
-
     }
 
     /**
@@ -93,9 +84,7 @@ class Transformer extends BaseTransformer implements Contract
      */
     protected function addRelationship($name)
     {
-
         $this->relationships[$name] = RelationshipFactory::build($this->item, $name);
-
     }
 
     /**
@@ -103,13 +92,10 @@ class Transformer extends BaseTransformer implements Contract
      */
     protected function getKeyData()
     {
-
         foreach ($this->keys as $key) {
-
-            $method = 'get' . ucfirst(camel_case($key)) . 'Attribute';
+            $method = 'get'.ucfirst(camel_case($key)).'Attribute';
 
             $this->set($key, method_exists($this, $method) ? $this->$method($this->item) : $this->item->{$key});
-
         }
 
         return $this;
@@ -120,11 +106,8 @@ class Transformer extends BaseTransformer implements Contract
      */
     protected function getRelationshipData()
     {
-
         foreach ($this->relationships as $data) {
-
             $this->set($data->key(), $data->transform());
-
         }
 
         return $this;
@@ -138,19 +121,14 @@ class Transformer extends BaseTransformer implements Contract
      */
     protected function loadRelationships(array $models)
     {
-
         foreach ($models as $key => $load) {
-
             if (!$this->childTransformation) {
-
                 $this->item->load($load);
-
             }
 
             $name = is_string($key) ? $key : $load;
 
             $this->addRelationship($name);
-
         }
 
         return $this;
@@ -163,8 +141,6 @@ class Transformer extends BaseTransformer implements Contract
      */
     protected function toArray()
     {
-
         return $this->getKeyData()->getRelationshipData()->get();
-
     }
 }

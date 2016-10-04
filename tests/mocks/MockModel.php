@@ -3,13 +3,12 @@
 use EGALL\Transformer\Contracts\Transformable;
 
 /**
- * MockModel Class
+ * MockModel Class.
  *
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class MockModel implements Transformable
 {
-
     public $id = 1;
     public $first_name = 'First';
     public $last_name = 'Last Name';
@@ -22,13 +21,11 @@ class MockModel implements Transformable
      */
     public function load($models)
     {
-
         if (!is_array($models)) {
             $models = (array) $models;
         }
 
         $this->loadRelationships($models);
-
     }
 
     /**
@@ -38,12 +35,11 @@ class MockModel implements Transformable
      */
     public function toArray()
     {
-
         return [
             'id'         => $this->id,
             'first_name' => $this->first_name,
             'last_name'  => $this->last_name,
-            'password'   => $this->password
+            'password'   => $this->password,
         ];
     }
 
@@ -54,7 +50,6 @@ class MockModel implements Transformable
      */
     public function transform()
     {
-
         return $this->transformer()->transform();
     }
 
@@ -65,7 +60,6 @@ class MockModel implements Transformable
      */
     public function transformer()
     {
-
         return new MockModelTransformer($this);
     }
 
@@ -77,9 +71,7 @@ class MockModel implements Transformable
      */
     protected function isPlural($string)
     {
-
         return str_plural($string) == $string;
-
     }
 
     /**
@@ -90,7 +82,6 @@ class MockModel implements Transformable
      */
     protected function getChildRelationship($name)
     {
-
         $parts = explode('.', $name);
         array_forget($parts, 0);
 
@@ -105,9 +96,7 @@ class MockModel implements Transformable
      */
     protected function getNestedKeyName($name)
     {
-
         return array_first(explode('.', $name));
-
     }
 
     /**
@@ -118,7 +107,6 @@ class MockModel implements Transformable
      */
     protected function isNestedRelationship($name)
     {
-
         return str_contains($name, '.');
     }
 
@@ -129,13 +117,9 @@ class MockModel implements Transformable
      */
     protected function loadRelationships(array $models)
     {
-
         foreach ($models as $model) {
-
             $this->setRelatedModels($model);
-
         }
-
     }
 
     /**
@@ -145,13 +129,9 @@ class MockModel implements Transformable
      */
     protected function setRelationship($related)
     {
-
         if ($this->isPlural($related)) {
-
             $this->{$related} = collect([new static, new static]);
-
         } else {
-
             $this->{$related} = new static;
         }
     }
@@ -163,27 +143,20 @@ class MockModel implements Transformable
      */
     protected function setNestedRelationship($related)
     {
-
         $key = $this->getNestedKeyName($related);
 
         $children = $this->getChildRelationship($related);
 
         if ($this->isPlural($key)) {
-
             $this->{$key} = collect([new static, new static]);
 
             $this->{$key}->each(function ($model) use ($children) {
-
                 $model->load($children);
-
             });
-
         } else {
-
             $this->{$key} = new static;
 
             $this->{$key}->load($children);
-
         }
     }
 
@@ -194,15 +167,10 @@ class MockModel implements Transformable
      */
     protected function setRelatedModels($related)
     {
-
         if ($this->isNestedRelationship($related)) {
-
             $this->setNestedRelationship($related);
-
         } else {
-
             $this->setRelationship($related);
-
         }
     }
 }

@@ -5,14 +5,12 @@ namespace EGALL\Transformer\Traits;
 use EGALL\Transformer\Transformer;
 
 /**
- * TransformableModel Class
+ * TransformableModel Class.
  *
- * @package EGALL\Transformer\Traits
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 trait TransformableModel
 {
-
     /**
      * Transform the model to an array.
      *
@@ -20,9 +18,7 @@ trait TransformableModel
      */
     public function transform()
     {
-
         return $this->transformer()->transform();
-
     }
 
     /**
@@ -33,11 +29,9 @@ trait TransformableModel
      */
     public function transformer($nested = false)
     {
-
         $transformer = $this->transformerClass();
 
         return new $transformer($this, $nested);
-
     }
 
     /**
@@ -50,16 +44,12 @@ trait TransformableModel
      */
     protected function transformerClass()
     {
-
-        if (class_exists($default = $this->getDefaultTransformerNamespace())){
-
+        if (class_exists($default = $this->getDefaultTransformerNamespace())) {
             return $default;
         }
 
         if (property_exists($this, 'transformer')) {
-
             return $this->transformer;
-
         }
 
         return Transformer::class;
@@ -72,7 +62,6 @@ trait TransformableModel
      */
     protected function getDefaultTransformerNamespace()
     {
-
         $parts = explode('\\', get_class($this));
 
         $class = array_last($parts);
@@ -80,7 +69,6 @@ trait TransformableModel
         array_forget($parts, array_last(array_keys($parts)));
 
         return $this->makeTransformer($class, implode('\\', $parts));
-
     }
 
     /**
@@ -92,7 +80,6 @@ trait TransformableModel
      */
     protected function makeTransformer($class, $namespace)
     {
-
-        return $namespace . '\\Transformers\\' . $class . 'Transformer';
+        return $namespace.'\\Transformers\\'.$class.'Transformer';
     }
 }

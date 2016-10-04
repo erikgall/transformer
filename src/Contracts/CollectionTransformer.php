@@ -7,12 +7,10 @@ use Illuminate\Support\Collection;
 /**
  * CollectionTransformer interface contract.
  *
- * @package EGALL\Transformer\Contracts
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 interface CollectionTransformer
 {
-
     /**
      * Set the collection to transform.
      *
@@ -28,5 +26,4 @@ interface CollectionTransformer
      * @return $this
      */
     public function childTransformation(bool $childTransformation);
-
 }

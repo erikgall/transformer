@@ -3,13 +3,12 @@
 use EGALL\Transformer\Transformer;
 
 /**
- * MockModelTransformer Class
+ * MockModelTransformer Class.
  *
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class MockModelTransformer extends Transformer
 {
-
     /**
      * The model array keys to use.
      *
@@ -24,9 +23,7 @@ class MockModelTransformer extends Transformer
      */
     public function getNameAttribute($item)
     {
-        
-        return $item->first_name . ' ' . $item->last_name;
-
+        return $item->first_name.' '.$item->last_name;
     }
 
     /**
@@ -37,7 +34,6 @@ class MockModelTransformer extends Transformer
      */
     public function getInitialsAttribute($item)
     {
-
-        return strtoupper($item->first_name[0] . $item->last_name[0]);
+        return strtoupper($item->first_name[0].$item->last_name[0]);
     }
 }

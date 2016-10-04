@@ -2,7 +2,7 @@
 
 namespace EGALL\Transformer;
 
-/**
+/*
  * Relationship Class
  *
  * @package EGALL\Transformer
@@ -11,14 +11,12 @@ namespace EGALL\Transformer;
 use EGALL\Transformer\Contracts\Transformable;
 
 /**
- * Relationship Class
+ * Relationship Class.
  *
- * @package EGALL\Transformer
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 abstract class Relationship
 {
-
     /**
      * The child model to transform.
      *
@@ -44,11 +42,9 @@ abstract class Relationship
      */
     public function __construct($item, $key)
     {
-
         $this->item = $item;
         $this->key = $key;
         $this->child = $this->getChildName($key);
-
     }
 
     /**
@@ -58,9 +54,7 @@ abstract class Relationship
      */
     public function child()
     {
-
         return $this->child;
-
     }
 
     /**
@@ -71,9 +65,7 @@ abstract class Relationship
      */
     public function isTransformable($object)
     {
-
         return in_array(Transformable::class, class_implements($object));
-        
     }
 
     /**
@@ -83,9 +75,7 @@ abstract class Relationship
      */
     public function key()
     {
-
         return $this->key;
-
     }
 
     /**
@@ -93,7 +83,7 @@ abstract class Relationship
      *
      * @return array
      */
-    public abstract function transform();
+    abstract public function transform();
 
     /**
      * Forget the first array item and implode the items to dot notation.
@@ -103,11 +93,9 @@ abstract class Relationship
      */
     protected function forgetFirstAndImplodeToDotNotation(array $parts)
     {
-
         array_forget($parts, 0);
 
         return implode('.', $parts);
-
     }
 
     /**
@@ -118,11 +106,8 @@ abstract class Relationship
      */
     protected function getChildName($key)
     {
-
         if (!str_contains($key, '.')) {
-
             return;
-
         }
 
         $parts = explode('.', $key);
@@ -130,6 +115,5 @@ abstract class Relationship
         $this->key = array_first($parts);
 
         return $this->forgetFirstAndImplodeToDotNotation($parts);
-
     }
 }

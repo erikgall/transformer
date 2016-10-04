@@ -5,14 +5,12 @@ namespace EGALL\Transformer\Relationships;
 use EGALL\Transformer\Relationship;
 
 /**
- * ModelToCollectionRelationship Class
+ * ModelToCollectionRelationship Class.
  *
- * @package EGALL\Transformer\Relationships
  * @author Erik Galloway <erik@mybarnapp.com>
  */
 class ModelToCollectionRelationship extends Relationship
 {
-
     /**
      * Transform a model to collection relationship.
      *
@@ -23,9 +21,7 @@ class ModelToCollectionRelationship extends Relationship
         $model = $this->item->{$this->key};
 
         if (!$model->isEmpty() && $this->isTransformable($model->first())) {
-
             return $this->transformCollection($model);
-
         }
 
         return $this->collectionToArray($model);
@@ -39,14 +35,9 @@ class ModelToCollectionRelationship extends Relationship
      */
     protected function collectionToArray($model)
     {
-
-        return $model->map(function($item) {
-
+        return $model->map(function ($item) {
             return $item->toArray();
-
         })->toArray();
-
-
     }
 
     /**
@@ -57,18 +48,12 @@ class ModelToCollectionRelationship extends Relationship
      */
     protected function transformCollection($model)
     {
-
-        return $model->map(function($child) {
-
+        return $model->map(function ($child) {
             if ($this->child) {
-
                 return $child->transformer(true)->with($this->child)->transform();
-
             }
 
             return $child->transform();
-
         })->toArray();
-
     }
 }
